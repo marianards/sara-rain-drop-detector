@@ -33,14 +33,35 @@ def run_rain_drop_detection(
             "one entry."
         ),
     ),
+    output_blob_storage_location: str = typer.Option(
+        "",
+        help=(
+            "All services in this family accept this option so they can be "
+            "called the same way. This service does not use it."
+            "JSON object describing the destination blob for the visualized image."
+        ),
+    ),
+    extras: str = typer.Option(
+        "",
+        help=(
+            "All services in this family accept this option so they can be "
+            "called the same way. This service does not use it."
+            "JSON object with extra per-workflow parameters."
+        ),
+    ),
     result_output_file: str = typer.Option(
         "/tmp/result.json",
         help=(
-            "Path to write the workflow result JSON to. The file is created "
-            "after the workflow succeeds and contains 'rain' (bool)."
+            "Local path to write the workflow result JSON to. The file is "
+            "created after the workflow succeeds and contains 'rain' (bool)."
         ),
     ),
 ) -> None:
+    # Every service in this family is called with the same set of arguments.
+    # This one does not use these two, so we drop them here to make the
+    # intent obvious and to silence unused-argument warnings.
+    del output_blob_storage_location, extras
+
     image_location = parse_input_blob_storage_locations(input_blob_storage_locations)[0]
 
     with tracer.start_as_current_span(
